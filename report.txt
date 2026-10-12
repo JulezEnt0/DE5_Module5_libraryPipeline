@@ -1,0 +1,128 @@
+
+============================================================
+  LIBRARY DATA PIPELINE
+  Starting pipeline execution...
+  Time: 2026-07-28 16:29:12
+============================================================
+
+============================================================
+  Processing Circulation Data
+============================================================
+
+[1/6] Loading raw data...
+
+Raw data:
+  - Rows: 5,100
+  - Columns: 6
+  - Missing values: 876
+  - Duplicates: 76
+
+[2/6] Removing duplicates...
+  - Removed 0 duplicate rows
+
+[3/6] Handling missing values...
+  - Dropped rows with missing values
+
+[4/6] Standardising dates...
+
+[5/6] Cleaning ISBNs...
+  - Found 269 invalid ISBNs
+
+[6/6] Saving cleaned data...
+  [OK] Saved to: data/silver/circulation_clean.csv
+
+Cleaned data:
+  - Rows: 5,100
+  - Columns: 7
+  - Missing values: 1,145
+  - Duplicates: 76
+
+============================================================
+  Processing Events Data
+============================================================
+
+[1/3] Loading raw data...
+
+Raw data:
+  - Rows: 500
+  - Columns: 11
+  - Missing values: 43
+  - Duplicates: 0
+
+[2/3] Handling missing values...
+
+[3/3] Saving cleaned data...
+  [OK] Saved to: data/silver/events_clean.csv
+
+Cleaned data:
+  - Rows: 500
+  - Columns: 11
+  - Missing values: 43
+  - Duplicates: 0
+
+============================================================
+  Processing Catalogue Data
+============================================================
+
+[1/4] Loading raw data...
+
+Raw data:
+  - Rows: 5,000
+  - Columns: 8
+  - Missing values: 0
+  - Duplicates: 0
+
+[2/4] Removing duplicates...
+  - Removed 0 duplicate rows
+
+[3/4] Cleaning ISBNs...
+  - Found 0 invalid ISBNs
+
+[4/4] Saving cleaned data...
+  [OK] Saved to: data/silver/catalogue_clean.csv
+
+Cleaned data:
+  - Rows: 5,000
+  - Columns: 9
+  - Missing values: 0
+  - Duplicates: 0
+
+============================================================
+  Processing Feedback Data
+============================================================
+
+[1/2] Loading and parsing feedback text...
+  - Found 200 feedback entries
+
+[2/2] Saving processed feedback...
+  [OK] Saved to: data/silver/feedback_summary.csv
+  - Processed 200 feedback entries
+
+============================================================
+  PIPELINE SUMMARY
+============================================================
+
+[OK] Pipeline completed successfully!
+  - Duration: 0.94 seconds
+  - Files processed: 4
+  - Output directory: data/silver
+
+Cleaned files created:
+  - feedback_summary.csv
+  - catalogue_clean.csv
+  - circulation_clean.csv
+  - events_clean.csv
+
+  [!] 4 warning(s) - review before submitting:
+    [!] Circulation: remove_duplicates() left 100 duplicates unchanged - is it implemented?
+    [!] Circulation: handle_missing_values() left 876 missing values unchanged - is it implemented?
+    [!] Events: handle_missing_values() left 43 missing values unchanged - is it implemented?
+    [!] Catalogue: validate_isbn() returned input unchanged for all 5,000 rows - is it implemented?
+
+============================================================
+  Next steps:
+  1. Review the cleaned data in data/silver/
+  2. Run your data quality analysis
+  3. Deploy to Microsoft Fabric
+============================================================
+
