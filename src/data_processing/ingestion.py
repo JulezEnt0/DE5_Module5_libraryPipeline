@@ -52,7 +52,7 @@ def load_csv(filepath):
     return pd.read_csv(filepath)
 
 
-def load_json(filepath, **kwargs):
+def load_json(filepath):
     filepath = Path(filepath)
     """Load JSON file and flatten structure.
 
