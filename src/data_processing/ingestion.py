@@ -33,26 +33,19 @@ def load_csv(filepath):
         raise FileNotFoundError(f"CSV File not found: {filepath}")
 
     try:
-        logger.info(f"Loading CSV from {filepath} (sheet_name={sheet_name})")
-        df = pd.read_excel(filepath, sheet_name=sheet_name, **kwargs)
+        logger.info("Loading CSV from %s", filepath)
+        df = pd.read_csv(filepath, **kwargs)
 
-        if isinstance(df, dict):
-            total_rows = sum(len(v) for v in df.values())
-            line = f"Successfully loaded {len(df)} sheets, total {total_rows} rows from {filepath}"
-            logger.info(line)
-        else:
-            logger.info(f"Successfully loaded {len(df)} rows from {filepath}")
-
+        logger.info(
+            "Successfully loaded %s rows and %s columns from %s",
+            len(df),
+            len(df.columns),
+            filepath,
+        )
         return df
 
-    except ValueError as e:
-        logger.error(f"Value error loading CSV {filepath}: {e}")
-        raise
-    except ImportError as e:
-        logger.error(f"Missing CSV engine for {filepath}: {e}")
-        raise
-    except Exception as e:
-        logger.error(f"Error loading CSV {filepath}: {e}")
+    except Exception:
+        logger.exception("Error loading CSV from %s", filepath)
         raise
 
     
@@ -69,7 +62,26 @@ def load_json(filepath):
         DataFrame with flattened data
 
     TODO: Implement JSON loading and flattening
-    """
+    """   filepath = Path(filepath)
+
+    if not filepath.is_file():
+        logger.error("JSON file not found: %s", filepath)
+        raise FileNotFoundError(f"JSON file not found: {filepath}")
+
+    try:
+        logger.info("Loading JSON from %s", filepath)
+        df = pd.read_json(filepath, **kwargs)
+
+        logger.info(
+            "Successfully loaded %s rows and %s columns from %s",
+            len(df),
+            len(df.columns),
+            filepath,
+        )
+        return df
+
+    except Exception:
+        logger.exception("Error loading JSON from %s", filepath)
     with open(filepath, "r") as f:
         data = json.load(f)
     return pd.json_normalize(data)
