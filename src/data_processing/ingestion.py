@@ -62,7 +62,8 @@ def load_json(filepath):
         DataFrame with flattened data
 
     TODO: Implement JSON loading and flattening
-    """   filepath = Path(filepath)
+    """  
+     filepath = Path(filepath)
 
     if not filepath.is_file():
         logger.error("JSON file not found: %s", filepath)
