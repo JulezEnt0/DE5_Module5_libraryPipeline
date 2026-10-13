@@ -25,7 +25,27 @@ def load_csv(filepath):
     TODO: Add error handling and logging
     """
 
-    return pd.read_csv(filepath)
+    filepath = Path(filepath)
+
+    if not filepath.exists():
+        logger.error(f"CSV File not found: {filepath}")
+        raise FileNotFoundError(f"CSV File not found: {filepath}")
+
+    try:
+        logger.info(f"Loading CSV from {filepath}")
+        df = pd.read_csv(filepath)
+        logger.info(f"Successfully loaded {len(df)} rows from {filepath}")
+        return df
+
+    except ValueError as e:
+        logger.error(f"Value error loading CSV {filepath}: {e}")
+        raise
+    except ImportError as e:
+        logger.error(f"Missing CSV engine for {filepath}: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"Error loading CSV {filepath}: {e}")
+        raise
 
 
 def load_json(filepath):
@@ -39,8 +59,32 @@ def load_json(filepath):
 
     TODO: Implement JSON loading and flattening
     """
+    filepath = Path(filepath)
+
+    if not filepath.exists():
+        logger.error(f"JSON File not found: {filepath}")
+        raise FileNotFoundError(f"JSON File not found: {filepath}")
+
+    try:
+        logger.info(f"Loading JSON from {filepath}")
+        df = pd.read_json(filepath)
+        logger.info(f"Successfully loaded {len(df)} rows from {filepath}")
+        return df
+
+    except ValueError as e:
+        logger.error(f"Value error loading JSON {filepath}: {e}")
+        raise
+    except ImportError as e:
+        logger.error(f"Missing JSON engine for {filepath}: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"Error loading JSON {filepath}: {e}")
+        raise
+
     with open(filepath, "r") as f:
         data = json.load(f)
+    
+    
     return pd.json_normalize(data)
 
 
