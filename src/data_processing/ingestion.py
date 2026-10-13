@@ -24,6 +24,38 @@ def load_csv(filepath):
 
     TODO: Add error handling and logging
     """
+    
+    filepath = Path(filepath)
+
+    # Check file exists
+    if not filepath.exists():
+        logger.error(f"CSV File not found: {filepath}")
+        raise FileNotFoundError(f"CSV File not found: {filepath}")
+
+    try:
+        logger.info(f"Loading CSV from {filepath} (sheet_name={sheet_name})")
+        df = pd.read_excel(filepath, sheet_name=sheet_name, **kwargs)
+
+        if isinstance(df, dict):
+            total_rows = sum(len(v) for v in df.values())
+            line = f"Successfully loaded {len(df)} sheets, total {total_rows} rows from {filepath}"
+            logger.info(line)
+        else:
+            logger.info(f"Successfully loaded {len(df)} rows from {filepath}")
+
+        return df
+
+    except ValueError as e:
+        logger.error(f"Value error loading CSV {filepath}: {e}")
+        raise
+    except ImportError as e:
+        logger.error(f"Missing CSV engine for {filepath}: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"Error loading CSV {filepath}: {e}")
+        raise
+
+    
     return pd.read_csv(filepath)
 
 
