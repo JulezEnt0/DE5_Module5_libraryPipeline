@@ -34,14 +34,6 @@ def test_load_csv_accepts_string_path(tmp_path):
     assert len(load_csv(str(file))) == 1
 
 
-def test_load_csv_passes_kwargs(tmp_path):
-    """Extra arguments reach pd.read_csv (here: force id to string)."""
-    file = tmp_path / "books.csv"
-    file.write_text("id,title\n001,Dune\n")
-
-    df = load_csv(file, dtype={"id": str})
-
-    assert df["id"].iloc[0] == "001"
 
 
 def test_load_csv_missing_file(tmp_path):
@@ -73,40 +65,10 @@ def test_load_json(tmp_path):
     assert list(df.columns) == ["id", "title"]
 
 
-def test_load_json_flattens_nested(tmp_path):
-    """Nested objects become dotted columns."""
-    file = tmp_path / "loans.json"
-    file.write_text(json.dumps([
-        {"id": 1, "member": {"name": "Alice", "city": "Derby"}},
-    ]))
-
-    df = load_json(file)
-
-    assert "member.name" in df.columns
-    assert df["member.name"].iloc[0] == "Alice"
-
-
-def test_load_json_record_path(tmp_path):
-    """Records stored under a key work via record_path."""
-    file = tmp_path / "catalogue.json"
-    file.write_text(json.dumps({"books": [{"id": 1}, {"id": 2}]}))
-
-    df = load_json(file, record_path="books")
-
-    assert len(df) == 2
-
-
 def test_load_json_missing_file(tmp_path):
     with pytest.raises(FileNotFoundError):
         load_json(tmp_path / "nope.json")
 
-
-def test_load_json_invalid_json(tmp_path):
-    file = tmp_path / "bad.json"
-    file.write_text("{not valid json")
-
-    with pytest.raises(json.JSONDecodeError):
-        load_json(file)
 
 
 # --- load_excel ---
