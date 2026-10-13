@@ -52,7 +52,8 @@ def load_csv(filepath):
     return pd.read_csv(filepath)
 
 
-def load_json(filepath):
+def load_json(filepath, **kwargs):
+    filepath = Path(filepath)
     """Load JSON file and flatten structure.
 
     Args:
@@ -63,7 +64,6 @@ def load_json(filepath):
 
     TODO: Implement JSON loading and flattening
     """  
-     filepath = Path(filepath)
 
     if not filepath.is_file():
         logger.error("JSON file not found: %s", filepath)
