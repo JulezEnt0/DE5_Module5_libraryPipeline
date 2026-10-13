@@ -2,40 +2,40 @@
 
 TODO: Complete these functions for the library project.
 """
+"""Data ingestion functions for the library project."""
 
 import json
-
 import logging
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def load_csv(filepath):
+def load_csv(filepath, **kwargs):
     """Load CSV file with error handling.
 
     Args:
         filepath: Path to CSV file
+        **kwargs: Additional arguments for pd.read_csv()
 
     Returns:
-        DataFrame with loaded data
+        pd.DataFrame: Loaded data
 
-    TODO: Add error handling and logging
+    Raises:
+        FileNotFoundError: If file doesn't exist
     """
-    
     filepath = Path(filepath)
 
-    # Check file exists
-    if not filepath.exists():
-        logger.error(f"CSV File not found: {filepath}")
-        raise FileNotFoundError(f"CSV File not found: {filepath}")
+    if not filepath.is_file():
+        logger.error("CSV file not found: %s", filepath)
+        raise FileNotFoundError(f"CSV file not found: {filepath}")
 
     try:
         logger.info("Loading CSV from %s", filepath)
         df = pd.read_csv(filepath, **kwargs)
-
         logger.info(
             "Successfully loaded %s rows and %s columns from %s",
             len(df),
@@ -43,27 +43,26 @@ def load_csv(filepath):
             filepath,
         )
         return df
-
     except Exception:
         logger.exception("Error loading CSV from %s", filepath)
         raise
 
-    
-    return pd.read_csv(filepath)
 
-
-def load_json(filepath):
-    filepath = Path(filepath)
+def load_json(filepath, **kwargs):
     """Load JSON file and flatten structure.
 
     Args:
         filepath: Path to JSON file
+        **kwargs: Additional arguments for pd.json_normalize()
 
     Returns:
-        DataFrame with flattened data
+        pd.DataFrame: Flattened data
 
-    TODO: Implement JSON loading and flattening
-    """  
+    Raises:
+        FileNotFoundError: If file doesn't exist
+        json.JSONDecodeError: If the file isn't valid JSON
+    """
+    filepath = Path(filepath)
 
     if not filepath.is_file():
         logger.error("JSON file not found: %s", filepath)
@@ -71,8 +70,10 @@ def load_json(filepath):
 
     try:
         logger.info("Loading JSON from %s", filepath)
-        df = pd.read_json(filepath, **kwargs)
+        with open(filepath, "r", encoding="utf-8") as f:
+            data = json.load(f)
 
+        df = pd.json_normalize(data, **kwargs)
         logger.info(
             "Successfully loaded %s rows and %s columns from %s",
             len(df),
@@ -80,36 +81,9 @@ def load_json(filepath):
             filepath,
         )
         return df
-
     except Exception:
         logger.exception("Error loading JSON from %s", filepath)
-    with open(filepath, "r") as f:
-        data = json.load(f)
-    return pd.json_normalize(data)
-
-
-def load_excel(filepath, sheet_name=0, **kwargs):
-    """Load Excel file into DataFrame.
-
-    Args:
-        filepath (str | Path): Path to Excel file
-        sheet_name (str|int|list[str|int]|None): Sheets to read
-        **kwargs: Additional arguments for pd.read_excel()
-
-    Returns:
-        pd.DataFrame | dict[str, pd.DataFrame]: Loaded data. Dict when multiple sheets requested.
-
-    Raises:
-        FileNotFoundError: If file doesn't exist
-        ValueError: If the sheet doesn't exist or file is invalid
-        ImportError: If the required Excel engine isn't installed
-        Exception: For other read errors
-
-    Example:
-        >>> df = load_excel('../data/catalogue.xlsx', sheet_name='Catalogue')
-        >>> print(len(df))
-    """
-    filepath = Path(filepath)
+        raise
 
     # Check file exists
     if not filepath.exists():
