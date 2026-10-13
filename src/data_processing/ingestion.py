@@ -138,4 +138,3 @@ def load_excel(filepath, sheet_name=0, **kwargs):
     except Exception as e:
         logger.error(f"Error loading Excel {filepath}: {e}")
         raise
-return pd.read.Excel(data) 
